@@ -16,16 +16,16 @@ Download the latest version of dove
 
 ```yaml
 - name: Install Playdate SDK
-	id: playdate
-	uses: ./
-	with:
-		# optional, can be omitted
-		version: latest
+  id: playdate
+  uses: ./
+  with:
+    # optional, can be omitted
+    version: latest
 
 - name: usage
-	run: |
-		echo "SDK root: $PLAYDATE_SDK_PATH"
-		echo "SDK root: ${{ steps.playdate.outputs.root }}"
-		echo "SDK version: ${{ steps.playdate.outputs.version }}"
-		pdc --version
+  run: |
+    echo "SDK root: $PLAYDATE_SDK_PATH"
+    echo "SDK root: ${{ steps.playdate.outputs.root }}"
+    echo "SDK version: ${{ steps.playdate.outputs.version }}"
+    pdc --version
 ```
