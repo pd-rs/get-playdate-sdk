@@ -1,0 +1,51 @@
+name: Test
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  tests:
+    name: ${{ matrix.version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+        version:
+          - latest
+          # - 1.9.2
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install SDK
+        id: installer
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: outputs
+        run: |
+          [ -d "${{ steps.installer.outputs.root }}" ] || (echo "::error ::Missing output SDK root" && exit 1)
+          # [ -z "${{ steps.installer.outputs.version }}" ] || (echo "::error ::Missing output version" && exit 1)
+          echo "version: ${{ steps.installer.outputs.version }}"
+
+      - name: ENV
+        run: |
+          [ -d "$PLAYDATE_SDK_PATH" ] || (echo "::error ::Missing output PLAYDATE_SDK_PATH" && exit 1)
+
+      - name: equality
+        run: |
+          [ "$PLAYDATE_SDK_PATH" == "${{ steps.installer.outputs.root }}" ] || (echo "::error ::Env not eq output: PLAYDATE_SDK_PATH" && exit 1)
+
+      - name: $PATH
+        run: |
+          which pdc || (echo "::error ::Missing pdc from PATH." && exit 1)

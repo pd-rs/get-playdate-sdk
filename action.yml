@@ -1,0 +1,87 @@
+name: Get Playdate SDK
+description: Download & install Playdate SDK.
+author: Alex Koz
+branding:
+  icon: package
+  color: yellow
+inputs:
+  version:
+    default: latest
+    description: SDK version (ex. `1.9.1` or default `latest`).
+    required: false
+  # path:
+  #   default: default
+  #   description: SDK installation path. Optional.
+  #   required: false
+  # token:
+  #   description: GITHUB_TOKEN. Optional.
+  #   required: false
+outputs:
+  root:
+    description: Path of SDK root
+    value: ${{ steps.output.outputs.root }}
+  version:
+    description: Version of the installed SDK.
+    value: ${{ steps.output.outputs.version }}
+runs:
+  using: "composite"
+  steps:
+    - name: download pkg
+      if: runner.os == 'macOS'
+      shell: bash
+      # env:
+      #   SECRET_TOKEN: ${{inputs.token}}
+      run: |
+        # matrix.version < 1.9.3:
+        #   url: https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.pkg
+        # matrix.version >= 1.9.3:
+        #   url: https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip" -o sdk.zip
+        unzip sdk.zip
+        sudo installer -store -pkg "PlaydateSDK.pkg" -target /
+        cat ~/.Playdate/config
+        echo "root: $PLAYDATE_SDK_PATH"
+        PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
+        echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH" >> $GITHUB_ENV
+
+    - name: download tar.gz
+      if: runner.os == 'Linux'
+      shell: bash
+      # env:
+      #   SECRET_TOKEN: ${{inputs.token}}
+      run: |
+        cd "${{ github.action_path }}"
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ matrix.version }}.tar.gz" -o sdk.tar.gz
+        mkdir _pd-sdk
+        tar -zxf sdk.tar.gz -C _pd-sdk
+        cd _pd-sdk/*/
+        # TODO: fix permissions:
+        # sudo chown runner setup.sh && chmod +x setup.sh
+        sudo ./setup.sh || true
+        echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
+        echo "$PWD/bin" >> $GITHUB_PATH
+
+    - name: download exe
+      if: runner.os == 'Windows'
+      shell: bash
+      # env:
+      #   SECRET_TOKEN: ${{inputs.token}}
+      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-running-a-script-using-powershell-core
+      run: |
+        echo "::error ::Windows not supported yet." && exit 1
+
+        cd "${{ github.action_path }}"
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-${{ matrix.version }}.exe" -o sdk.exe
+        # TODO: install sdk.exe
+        echo "try 1"
+        ./sdk.exe --quiet || true
+        echo "try 2"
+        ./sdk.exe ?
+        # TODO: output the path
+
+    - name: post setup
+      id: output
+      shell: bash
+      run: |
+        echo "::set-output name=root::$PLAYDATE_SDK_PATH"
+        echo "::set-output name=version::$(cat $PLAYDATE_SDK_PATH/VERSION.txt)"
