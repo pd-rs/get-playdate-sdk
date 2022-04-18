@@ -21,8 +21,8 @@ jobs:
           - ubuntu-latest
           # - windows-latest
         version:
-          - latest
-          # - 1.9.2
+          # - latest
+          - 1.9.1
     steps:
       - uses: actions/checkout@v2
 
