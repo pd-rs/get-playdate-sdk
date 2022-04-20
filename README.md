@@ -20,6 +20,7 @@ Download the latest version of dove
   uses: ./
   with:
     # optional, can be omitted
+    # possible values: version (1.10.0 or 1.9.3) or "latest"
     version: latest
 
 - name: usage

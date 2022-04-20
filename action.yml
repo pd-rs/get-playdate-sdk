@@ -29,13 +29,7 @@ runs:
     - name: download pkg
       if: runner.os == 'macOS'
       shell: bash
-      # env:
-      #   SECRET_TOKEN: ${{inputs.token}}
       run: |
-        # matrix.version < 1.9.3:
-        #   url: https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.pkg
-        # matrix.version >= 1.9.3:
-        #   url: https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip
         curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip" -o sdk.zip
         unzip sdk.zip
         sudo installer -store -pkg "PlaydateSDK.pkg" -target /
