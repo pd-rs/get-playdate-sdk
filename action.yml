@@ -26,20 +26,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # First two versions of SDK was not packed into zip for macOS, just pkg.
-    - name: download pkg (<= 1.9.2)
-      if: (runner.os == 'macOS' && (matrix.version == '1.9.1' || matrix.version == '1.9.2'))
-      shell: bash
-      run: |
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.pkg" -o PlaydateSDK.pkg
-        sudo installer -store -pkg "PlaydateSDK.pkg" -target /
-        cat ~/.Playdate/config
-        echo "root: $PLAYDATE_SDK_PATH"
-        PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
-        echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH" >> $GITHUB_ENV
-
-    - name: download pkg (>= 1.9.3)
-      if: (runner.os == 'macOS' && (matrix.version != '1.9.1' || matrix.version != '1.9.2'))
+    - name: download pkg
+      if: runner.os == 'macOS'
       shell: bash
       run: |
         curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip" -o sdk.zip
