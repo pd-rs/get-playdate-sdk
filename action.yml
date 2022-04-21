@@ -41,8 +41,6 @@ runs:
     - name: download tar.gz
       if: runner.os == 'Linux'
       shell: bash
-      # env:
-      #   SECRET_TOKEN: ${{inputs.token}}
       run: |
         cd "${{ github.action_path }}"
         curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ matrix.version }}.tar.gz" -o sdk.tar.gz
