@@ -30,7 +30,7 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.version }}.zip" -o sdk.zip
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ inputs.version }}.zip" -o sdk.zip
         unzip sdk.zip
         sudo installer -store -pkg "PlaydateSDK.pkg" -target /
         cat ~/.Playdate/config
@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         cd "${{ github.action_path }}"
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ matrix.version }}.tar.gz" -o sdk.tar.gz
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ inputs.version }}.tar.gz" -o sdk.tar.gz
         mkdir _pd-sdk
         tar -zxf sdk.tar.gz -C _pd-sdk
         cd _pd-sdk/*/
@@ -63,7 +63,7 @@ runs:
         echo "::error ::Windows not supported yet." && exit 1
 
         cd "${{ github.action_path }}"
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-${{ matrix.version }}.exe" -o sdk.exe
+        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-${{ inputs.version }}.exe" -o sdk.exe
         # TODO: install sdk.exe
         echo "try 1"
         ./sdk.exe --quiet || true
