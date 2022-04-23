@@ -38,6 +38,12 @@ runs:
         PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
         echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH" >> $GITHUB_ENV
 
+    - name: install apt dependencies
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt install -y gcc-arm-none-eabi
+
     - name: download tar.gz
       if: runner.os == 'Linux'
       shell: bash
