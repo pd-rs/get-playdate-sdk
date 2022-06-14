@@ -32,7 +32,7 @@ runs:
       run: |
         curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ inputs.version }}.zip" -o sdk.zip
         unzip sdk.zip
-        sudo installer -store -pkg "PlaydateSDK.pkg" -target /
+        sudo installer -store -pkg "PlaydateSDK-${{ inputs.version }}.pkg" -target /
         cat ~/.Playdate/config
         echo "root: $PLAYDATE_SDK_PATH"
         PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
