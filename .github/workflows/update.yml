@@ -32,7 +32,7 @@ jobs:
             echo "$trimmed"
           }
 
-          LATEST_TARGET=$(cat winget-latest/.latest-url.txt)
+          LATEST_TARGET=$(cat .github/latest-url.txt)
           LATEST_TARGET=$(trim "$LATEST_TARGET")
           echo "  prev: $LATEST_TARGET"
 
@@ -41,7 +41,7 @@ jobs:
           echo "actual: $ACTUAL_TARGET"
 
           # save:
-          echo "$ACTUAL_TARGET" > winget-latest/.latest-url.txt
+          echo "$ACTUAL_TARGET" > .github/latest-url.txt
           [ "$ACTUAL_TARGET" == "$LATEST_TARGET" ] && echo "update not needed"
           [ "$ACTUAL_TARGET" == "$LATEST_TARGET" ] || (echo "changed=true" >> $GITHUB_OUTPUT)
 
