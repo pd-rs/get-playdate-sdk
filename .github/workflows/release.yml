@@ -23,9 +23,9 @@ jobs:
         id: version
         run: |
           if [ -z "${{ inputs.tag }}" ]; then
-              echo ::set-output name=value::$(echo $GITHUB_REF | cut -d / -f 3)
+              echo "value=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
           else
-              echo ::set-output name=value::${{ inputs.tag }}
+              echo "value=${{ inputs.tag }}" >> $GITHUB_OUTPUT
           fi
 
       # checkout needed for changelog only
@@ -63,7 +63,7 @@ jobs:
           <!-- Built with ♥️. -->
           " > $RESULT_FILE
 
-          echo ::set-output name=file::"$RESULT_FILE"
+          echo "file=$RESULT_FILE" >> $GITHUB_OUTPUT
 
       - id: release
         name: create release "${{ steps.version.outputs.value }}"

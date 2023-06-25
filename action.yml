@@ -90,5 +90,5 @@ runs:
       id: output
       shell: bash
       run: |
-        echo "::set-output name=root::$PLAYDATE_SDK_PATH"
-        echo "::set-output name=version::$(cat $PLAYDATE_SDK_PATH/VERSION.txt)"
+        echo "root=$PLAYDATE_SDK_PATH" >> $GITHUB_OUTPUT
+        echo "version=$(cat $PLAYDATE_SDK_PATH/VERSION.txt)" >> $GITHUB_OUTPUT
