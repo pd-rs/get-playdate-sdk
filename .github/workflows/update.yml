@@ -60,6 +60,7 @@ jobs:
           echo "saved"
 
       # TODO: run tests
+      # mb attach tests to pr status with https://github.com/myrotvorets/set-commit-status-action
       # - name: test
       #   if: steps.check.outputs.changed
       #   uses: ./
