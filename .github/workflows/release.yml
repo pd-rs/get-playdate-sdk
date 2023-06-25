@@ -30,7 +30,7 @@ jobs:
 
       # checkout needed for changelog only
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: ${{ steps.version.outputs.value }}

@@ -7,7 +7,7 @@ branding:
 inputs:
   version:
     default: latest
-    description: SDK version (ex. `1.9.1` or default `latest`).
+    description: SDK version (ex. `2.0.0` or default `latest`).
     required: false
   # path:
   #   default: default
@@ -30,7 +30,7 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ inputs.version }}.zip" -o sdk.zip
+        curl -L -sS --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ inputs.version }}.zip" -o sdk.zip
         unzip sdk.zip
         sudo installer -store -pkg "PlaydateSDK.pkg" -target /
         cat ~/.Playdate/config
@@ -49,7 +49,7 @@ runs:
       shell: bash
       run: |
         cd "${{ github.action_path }}"
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ inputs.version }}.tar.gz" -o sdk.tar.gz
+        curl -L -sS --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ inputs.version }}.tar.gz" -o sdk.tar.gz
         mkdir _pd-sdk
         tar -zxf sdk.tar.gz -C _pd-sdk
         cd _pd-sdk/*/
@@ -59,23 +59,32 @@ runs:
         echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
         echo "$PWD/bin" >> $GITHUB_PATH
 
-    - name: download exe
+    - name: install winget
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: choco install --no-progress winget-cli
+
+    - name: install winget
+      if: runner.os == 'Windows' && inputs.version == 'latest'
+      shell: powershell
+      run: |
+        winget settings --enable LocalManifestFiles
+        # winget settings --enable ignore-security-hash-argument
+        # winget install --silent --accept-source-agreements --disable-interactivity  --manifest .\\winget-latest\\ --force
+        winget install --silent --accept-source-agreements --disable-interactivity  --manifest .\\winget-latest
+
+    - name: install winget
+      if: runner.os == 'Windows' && inputs.version != 'latest'
+      shell: powershell
+      run: winget install Panic.PlaydateSDK --silent --accept-source-agreements --disable-interactivity -v ${{ inputs.version }}
+
+    - name: set env
       if: runner.os == 'Windows'
       shell: bash
-      # env:
-      #   SECRET_TOKEN: ${{inputs.token}}
-      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-running-a-script-using-powershell-core
       run: |
-        echo "::error ::Windows not supported yet." && exit 1
-
-        cd "${{ github.action_path }}"
-        curl -L --silent --show-error --fail "https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-${{ inputs.version }}.exe" -o sdk.exe
-        # TODO: install sdk.exe
-        echo "try 1"
-        ./sdk.exe --quiet || true
-        echo "try 2"
-        ./sdk.exe ?
-        # TODO: output the path
+        PLAYDATE_SDK_PATH_lOCAL=$(realpath ~/Documents/PlaydateSDK)
+        echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH_lOCAL" >> "$GITHUB_ENV"
+        echo "$PLAYDATE_SDK_PATH_lOCAL/bin" >> $GITHUB_PATH
 
     - name: post setup
       id: output

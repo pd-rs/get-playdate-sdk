@@ -1,0 +1,1 @@
+https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-2.0.0.exe
