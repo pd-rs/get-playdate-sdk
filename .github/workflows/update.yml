@@ -1,0 +1,82 @@
+name: Update
+on:
+  schedule:
+    - cron: "0 0,12 * * *"
+
+env:
+  URL: https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-latest.exe
+
+jobs:
+  update:
+    name: Update Latest
+    runs-on: ubuntu-latest
+    # Check if the event is not triggered by a fork
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: check redirect target
+        id: check
+        run: |
+          trim() {
+            local trimmed="$1"
+
+            # Strip leading space.
+            trimmed="${trimmed## }"
+            # Strip trailing space.
+            trimmed="${trimmed%% }"
+
+            echo "$trimmed"
+          }
+
+          LATEST_TARGET=$(cat .github/latest-url.txt)
+          LATEST_TARGET=$(trim "$LATEST_TARGET")
+          echo "  prev: $LATEST_TARGET"
+
+          ACTUAL_TARGET=$(curl -X HEAD -w "%{url_effective}" -I -L -s -S $URL -o /dev/null)
+          ACTUAL_TARGET=$(trim "$ACTUAL_TARGET")
+          echo "actual: $ACTUAL_TARGET"
+
+          # save:
+          echo "$ACTUAL_TARGET" > .github/latest-url.txt
+          [ "$ACTUAL_TARGET" == "$LATEST_TARGET" ] && echo "update not needed"
+          [ "$ACTUAL_TARGET" == "$LATEST_TARGET" ] || (echo "changed=true" >> $GITHUB_OUTPUT)
+
+      - name: update
+        id: update
+        if: steps.check.outputs.changed
+        run: |
+          echo "download $URL"
+          curl -L -sS --show-error --fail "$URL" -o ./sdk
+          NEW_HASH=$(shasum -ba 256 ./sdk)
+          echo "new hash: $NEW_HASH"
+          rm -rf ./sdk
+
+          # save hash:
+          ruby .github/workflows/update.rb "winget-latest/SDK.installer.yaml" $NEW_HASH
+          echo "saved"
+
+      # TODO: run tests
+      # mb attach tests to pr status with https://github.com/myrotvorets/set-commit-status-action
+      # - name: test
+      #   if: steps.check.outputs.changed
+      #   uses: ./
+
+      - name: create PR
+        if: steps.check.outputs.changed
+        uses: peter-evans/create-pull-request@v5
+        with:
+          add-paths: winget-latest/*
+          commit-message: "update to latest SDK (win)"
+          title: "Update to latest SDK"
+          labels: win
+          body: ""
+          branch: update-hash
+          branch-suffix: short-commit-hash
+          delete-branch: true
+          #TODO: add @rtsuk
+          assignees: boozook
+          reviewers: boozook

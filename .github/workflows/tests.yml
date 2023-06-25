@@ -1,6 +1,7 @@
 name: Test
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - main
@@ -19,13 +20,12 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          # - windows-latest
+          - windows-latest
         version:
-          - latest # actual
-          - 1.10.0 # actual
-          - 1.9.3 # oldest supported
+          - latest # actual version
+          - 2.0.0 # specified version
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: install SDK
         id: installer

@@ -17,10 +17,9 @@ Download the latest version of dove
 ```yaml
 - name: Install Playdate SDK
   id: playdate
-  uses: pd-rs/get-playdate-sdk@0.1.2
+  uses: pd-rs/get-playdate-sdk@0.1.4
   with:
-    # optional, can be omitted
-    # possible values: version (1.10.0 or 1.9.3) or "latest"
+    # possible values: version x.x.x or "latest"
     version: latest
 
 - name: usage
