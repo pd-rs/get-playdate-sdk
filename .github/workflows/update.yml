@@ -1,7 +1,7 @@
 name: Update
 on:
   schedule:
-    - cron: "0 0,12 * * *"
+    - cron: "0 12 * * *"
 
 env:
   URL: https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-latest.exe
@@ -10,8 +10,6 @@ jobs:
   update:
     name: Update Latest
     runs-on: ubuntu-latest
-    # Check if the event is not triggered by a fork
-    if: github.event.pull_request.head.repo.full_name == github.repository
     defaults:
       run:
         shell: bash
@@ -59,21 +57,18 @@ jobs:
           ruby .github/workflows/update.rb "winget-latest/SDK.installer.yaml" $NEW_HASH
           echo "saved"
 
-      # TODO: run tests
-      # mb attach tests to pr status with https://github.com/myrotvorets/set-commit-status-action
-      # - name: test
-      #   if: steps.check.outputs.changed
-      #   uses: ./
-
       - name: create PR
         if: steps.check.outputs.changed
         uses: peter-evans/create-pull-request@v5
         with:
-          add-paths: winget-latest/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: |
+            winget-latest/SDK.installer.yaml
+            .github/latest-url.txt
           commit-message: "update to latest SDK (win)"
           title: "Update to latest SDK"
           labels: win
-          body: ""
+          body: "Updated hash of new SDK installer for windows."
           branch: update-hash
           branch-suffix: short-commit-hash
           delete-branch: true
