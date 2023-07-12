@@ -1,11 +1,10 @@
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.1.0.schema.json
-
+---
 PackageIdentifier: Panic.PlaydateSDK
 PackageVersion: 0.0.0
 InstallerType: nullsoft
 Installers:
-  - Architecture: x64
-    InstallerUrl: https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-latest.exe
-    InstallerSha256: c253262ec7f9aa7f7b5474a741f2f7289fcdd0fa1eea0e958b3b1d150354bc0b
+- Architecture: x64
+  InstallerUrl: https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-latest.exe
+  InstallerSha256: e630affad13651a2f3ce114c7a11afa6dab6d63bcae1a62cf2adccef8d0e4e9c
 ManifestType: installer
 ManifestVersion: 1.1.0
