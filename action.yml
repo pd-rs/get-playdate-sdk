@@ -64,16 +64,14 @@ runs:
       shell: powershell
       run: choco install --no-progress winget-cli
 
-    - name: install winget
+    - name: install latest SDK
       if: runner.os == 'Windows' && inputs.version == 'latest'
       shell: powershell
       run: |
         winget settings --enable LocalManifestFiles
-        # winget settings --enable ignore-security-hash-argument
-        # winget install --silent --accept-source-agreements --disable-interactivity  --manifest .\\winget-latest\\ --force
-        winget install --silent --accept-source-agreements --disable-interactivity  --manifest .\\winget-latest
+        winget install --silent --accept-source-agreements --disable-interactivity  --manifest ${{ github.action_path }}\\winget-latest
 
-    - name: install winget
+    - name: install SDK ${{ inputs.version }}
       if: runner.os == 'Windows' && inputs.version != 'latest'
       shell: powershell
       run: winget install Panic.PlaydateSDK --silent --accept-source-agreements --disable-interactivity -v ${{ inputs.version }}
