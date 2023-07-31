@@ -62,14 +62,16 @@ runs:
     - name: install winget
       if: runner.os == 'Windows'
       shell: powershell
-      run: choco install --no-progress winget-cli --version 1.4.11071.0 -y
+      run: choco install --no-progress winget-cli --version 1.5.1881 -y
 
     - name: install latest SDK
       if: runner.os == 'Windows' && inputs.version == 'latest'
       shell: powershell
       run: |
+        winget settings --disable-interactivity
         winget settings --enable LocalManifestFiles
-        winget install --silent --accept-source-agreements --disable-interactivity --manifest ${{ github.action_path }}\\winget-latest
+        $manifest_path = [IO.Path]::GetFullPath( "${{ github.action_path }}\\winget-latest" )
+        winget install --manifest $manifest_path --silent --disable-interactivity --force
 
     - name: install SDK ${{ inputs.version }}
       if: runner.os == 'Windows' && inputs.version != 'latest'
