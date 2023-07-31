@@ -69,7 +69,7 @@ runs:
       shell: powershell
       run: |
         winget settings --enable LocalManifestFiles
-        winget install --silent --accept-source-agreements --disable-interactivity --force --ignore-security-hash --manifest ${{ github.action_path }}\\winget-latest
+        winget install --silent --accept-source-agreements --disable-interactivity --manifest ${{ github.action_path }}\\winget-latest
 
     - name: install SDK ${{ inputs.version }}
       if: runner.os == 'Windows' && inputs.version != 'latest'
