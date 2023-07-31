@@ -54,7 +54,7 @@ jobs:
           rm -rf ./sdk
 
           # save hash:
-          ruby .github/workflows/update.rb "winget-latest/SDK.installer.yaml" $NEW_HASH
+          ruby .github/workflows/update.rb "winget-latest/Panic.PlaydateSDK.installer.yaml" $NEW_HASH
           echo "saved"
 
       - name: create PR
@@ -63,7 +63,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           add-paths: |
-            winget-latest/SDK.installer.yaml
+            winget-latest/Panic.PlaydateSDK.installer.yaml
             .github/latest-url.txt
           commit-message: "update to latest SDK (win)"
           title: "Update to latest SDK"
