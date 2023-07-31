@@ -12,14 +12,12 @@ This GitHub Action delivers specified [Playdate SDK][Playdate].
 
 ## Usage Example
 
-Install the latest version of Playdate SDK
-
 ```yaml
 - name: Install Playdate SDK
   id: playdate
   uses: pd-rs/get-playdate-sdk@0.1.6
   with:
-    version: 2.0.0 # possible values: version `x.x.x` or `latest`
+    version: 2.0.0 # possible values: version `x.x.x` or `latest` by default
 
 - name: usage
   run: |
