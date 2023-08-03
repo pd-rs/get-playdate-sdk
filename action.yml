@@ -68,6 +68,7 @@ runs:
       if: runner.os == 'Windows' && inputs.version == 'latest'
       shell: powershell
       run: |
+        $ProgressPreference = 'SilentlyContinue'
         winget settings --disable-interactivity
         winget settings --enable LocalManifestFiles
         $manifest_path = [IO.Path]::GetFullPath( "${{ github.action_path }}\\winget-latest" )
