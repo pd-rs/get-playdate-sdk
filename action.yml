@@ -59,6 +59,11 @@ runs:
         echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
         echo "$PWD/bin" >> $GITHUB_PATH
 
+    - name: install gnu-arm-gcc
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: choco install --no-progress gcc-arm-embedded -y
+
     - name: install winget
       if: runner.os == 'Windows'
       shell: powershell
