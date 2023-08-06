@@ -50,3 +50,7 @@ jobs:
       - name: $PATH
         run: |
           which pdc || (echo "::error ::Missing pdc from PATH." && exit 1)
+
+      - name: arm-none-eabi-gcc
+        run: |
+          which which arm-none-eabi-gcc || (echo "::error ::Missing which arm-none-eabi-gcc from PATH." && exit 1)
