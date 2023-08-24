@@ -5,6 +5,6 @@ InstallerType: nullsoft
 Installers:
 - Architecture: x64
   InstallerUrl: https://download.panic.com/playdate_sdk/Windows/PlaydateSDK-latest.exe
-  InstallerSha256: e630affad13651a2f3ce114c7a11afa6dab6d63bcae1a62cf2adccef8d0e4e9c
+  InstallerSha256: 8b1693e91821f47f5ee82533f7adea1af8255c6311dbfec88120476b052311a7
 ManifestType: installer
 ManifestVersion: 1.1.0
