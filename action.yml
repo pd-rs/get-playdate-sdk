@@ -28,19 +28,17 @@ runs:
   steps:
     - name: prepare
       id: cfg
-      if: runner.os != 'Windows'
       shell: bash
       run: |
         OS_EXT="${{ (runner.os == 'Linux' && 'tar.gz') || (runner.os == 'macOS' && 'zip') || ( runner.os == 'Windows' && 'exe') }}"
-        RUNNER_OS_PART="${{ (runner.os == 'Linux' && '/Linux') || (runner.os == 'macOS' && '') || ( runner.os == 'Windows' && '/Windows') }}"
-        URL="https://download.panic.com/playdate_sdk${RUNNER_OS_PART?}/PlaydateSDK-${{ inputs.version }}.${OS_EXT?}"
+        RUNNER_OS_PART="${{ (runner.os == 'Linux' && '/Linux/') || (runner.os == 'macOS' && '/') || ( runner.os == 'Windows' && '/Windows/') }}"
+        URL="https://download.panic.com/playdate_sdk${RUNNER_OS_PART?}PlaydateSDK-${{ inputs.version }}.${OS_EXT?}"
         echo "filename=sdk.$OS_EXT" >> $GITHUB_OUTPUT
         echo "ext=$OS_EXT" >> $GITHUB_OUTPUT
         echo "url=$URL" >> $GITHUB_OUTPUT
 
     - name: get direct url
       id: direct-url
-      if: runner.os != 'Windows'
       shell: bash
       run: |
         trim() {
