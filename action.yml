@@ -9,6 +9,10 @@ inputs:
     default: latest
     description: SDK version (ex. `2.0.0` or default `latest`).
     required: false
+  cache:
+    default: 'true'
+    description: Cache installer.
+    required: false
   # path:
   #   default: default
   #   description: SDK installation path. Optional.
@@ -55,23 +59,24 @@ runs:
         echo "url=$DIRECT_URL" >> $GITHUB_OUTPUT
 
     - name: Cache restore
+      if: (runner.os != 'Windows') && (inputs.cache == 'true')
       uses: actions/cache/restore@v3
-      # TODO: if: inputs.cache
       id: cache-restore
       with:
         path: ${{ steps.cfg.outputs.filename }}
         key: ${{ runner.os }}-${{ steps.direct-url.outputs.url }}
 
     - name: download
-      if: steps.cache-restore.outputs.cache-hit != 'true'
+      # not using cache or get cache-miss and not windows
+      if: (runner.os != 'Windows') && ((steps.cache-restore.outputs.cache-hit != 'true') || (inputs.cache != 'true'))
       shell: bash
       run: |
         curl -L -sS --show-error --fail "${{ steps.direct-url.outputs.url }}" -o ${{ steps.cfg.outputs.filename }}
 
-    # TODO: move it after successful installation?
     - name: Cache save
       id: cache-save
-      # if: steps.cache-restore.outputs.cache-hit != 'true'
+      # not windows and cache-miss and using cache
+      if: (runner.os != 'Windows') && (steps.cache-restore.outputs.cache-hit != 'true') && (inputs.cache == 'true')
       uses: actions/cache/save@v3
       with:
         path: ${{ steps.cfg.outputs.filename }}
@@ -101,39 +106,11 @@ runs:
         echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
         echo "$PWD/bin" >> $GITHUB_PATH
 
-    # OLD PART
-    # - name: download pkg
-    #   if: runner.os == 'macOS'
-    #   shell: bash
-    #   run: |
-    #     curl -L -sS --show-error --fail "https://download.panic.com/playdate_sdk/PlaydateSDK-${{ inputs.version }}.zip" -o sdk.zip
-    #     unzip sdk.zip
-    #     sudo installer -store -pkg "PlaydateSDK.pkg" -target /
-    #     cat ~/.Playdate/config
-    #     echo "root: $PLAYDATE_SDK_PATH"
-    #     PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
-    #     echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH" >> $GITHUB_ENV
-
     - name: install gnu-arm-gcc
       if: runner.os == 'Linux'
       shell: bash
       run: |
         sudo apt install -y gcc-arm-none-eabi
-
-    # - name: download tar.gz
-    #   if: runner.os == 'Linux'
-    #   shell: bash
-    #   run: |
-    #     cd "${{ github.action_path }}"
-    #     curl -L -sS --show-error --fail "https://download.panic.com/playdate_sdk/Linux/PlaydateSDK-${{ inputs.version }}.tar.gz" -o sdk.tar.gz
-    #     mkdir _pd-sdk
-    #     tar -zxf sdk.tar.gz -C _pd-sdk
-    #     cd _pd-sdk/*/
-    #     # TODO: fix permissions:
-    #     # sudo chown runner setup.sh && chmod +x setup.sh
-    #     sudo ./setup.sh || true
-    #     echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
-    #     echo "$PWD/bin" >> $GITHUB_PATH
 
     - name: install gnu-arm-gcc
       if: runner.os == 'Windows'
