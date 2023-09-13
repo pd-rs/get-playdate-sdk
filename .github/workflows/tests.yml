@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.version }} on ${{ matrix.os }}
+    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -24,6 +24,7 @@ jobs:
         version:
           - latest # actual version
           - 2.0.0 # specified version
+        cache: [true, false]
     steps:
       - uses: actions/checkout@v3
 
@@ -32,6 +33,7 @@ jobs:
         uses: ./
         with:
           version: ${{ matrix.version }}
+          cache: ${{ matrix.cache }}
 
       - name: outputs
         run: |
