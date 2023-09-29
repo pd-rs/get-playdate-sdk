@@ -2,13 +2,16 @@
 
 This GitHub Action delivers specified [Playdate SDK][Playdate].
 
+Also installs arm-gcc gnu toolchain.
+
 [Playdate]: https://play.date/dev/#cardSDK
 
 
 ## Parameters
 
 - `version` - Specified version of the SDK. Optional. Default value is `latest`.
-<!-- - `token` - GITHUB_TOKEN. Optional. -->
+- `cache` - Cache installer. Default by `true`.
+
 
 ## Usage Example
 
@@ -32,7 +35,3 @@ This GitHub Action delivers specified [Playdate SDK][Playdate].
 - macOS
 - Linux
 - Windows
-
-Note: for Windows there's [winget][] is used as source for specified SDK version, and as just installer-helper for `latest` version
-
-[winget]: https://github.com/idleberg/winget-pkgs/tree/master/manifests/p/Panic/PlaydateSDK
