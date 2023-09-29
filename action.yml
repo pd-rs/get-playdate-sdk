@@ -10,7 +10,7 @@ inputs:
     description: SDK version (ex. `2.0.0` or default `latest`).
     required: false
   cache:
-    default: 'true'
+    default: "true"
     description: Cache installer.
     required: false
   # path:
@@ -59,7 +59,7 @@ runs:
         echo "url=$DIRECT_URL" >> $GITHUB_OUTPUT
 
     - name: Cache restore
-      if: (runner.os != 'Windows') && (inputs.cache == 'true')
+      if: inputs.cache == 'true'
       uses: actions/cache/restore@v3
       id: cache-restore
       with:
@@ -67,16 +67,16 @@ runs:
         key: ${{ runner.os }}-${{ steps.direct-url.outputs.url }}
 
     - name: download
-      # not using cache or get cache-miss and not windows
-      if: (runner.os != 'Windows') && ((steps.cache-restore.outputs.cache-hit != 'true') || (inputs.cache != 'true'))
+      # not using cache or have got cache-miss
+      if: (steps.cache-restore.outputs.cache-hit != 'true') || (inputs.cache != 'true')
       shell: bash
       run: |
         curl -L -sS --show-error --fail "${{ steps.direct-url.outputs.url }}" -o ${{ steps.cfg.outputs.filename }}
 
     - name: Cache save
       id: cache-save
-      # not windows and cache-miss and using cache
-      if: (runner.os != 'Windows') && (steps.cache-restore.outputs.cache-hit != 'true') && (inputs.cache == 'true')
+      # cache-miss and using cache
+      if: (steps.cache-restore.outputs.cache-hit != 'true') && (inputs.cache == 'true')
       uses: actions/cache/save@v3
       with:
         path: ${{ steps.cfg.outputs.filename }}
@@ -100,7 +100,6 @@ runs:
         mkdir _pd-sdk
         tar -zxf ${{ steps.cfg.outputs.filename }} -C _pd-sdk
         cd _pd-sdk/*/
-        # TODO: fix permissions:
         # sudo chown runner setup.sh && chmod +x setup.sh
         sudo ./setup.sh || true
         echo "PLAYDATE_SDK_PATH=$PWD" >> $GITHUB_ENV
@@ -112,29 +111,12 @@ runs:
       run: |
         sudo apt install -y gcc-arm-none-eabi
 
-    - name: install gnu-arm-gcc
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: choco install --no-progress gcc-arm-embedded -y
-
-    - name: install winget
-      if: runner.os == 'Windows'
-      shell: powershell
-      run: choco install --no-progress winget-cli --version 1.5.1881 -y
-
     - name: install latest SDK
-      if: runner.os == 'Windows' && inputs.version == 'latest'
+      if: runner.os == 'Windows'
       shell: powershell
-      run: |
-        winget settings --disable-interactivity
-        winget settings --enable LocalManifestFiles
-        $manifest_path = [IO.Path]::GetFullPath( "${{ github.action_path }}\\winget-latest" )
-        winget install --manifest $manifest_path --silent --disable-interactivity --force
-
-    - name: install SDK ${{ inputs.version }}
-      if: runner.os == 'Windows' && inputs.version != 'latest'
-      shell: powershell
-      run: winget install Panic.PlaydateSDK --silent --accept-source-agreements --disable-interactivity -v ${{ inputs.version }}
+      # /D doesn't works
+      # run: Start-Process -Wait -FilePath "${{ steps.cfg.outputs.filename }}" -ArgumentList "/S","/D=D:\\PlaydateSDK"
+      run: Start-Process -Wait -FilePath "${{ steps.cfg.outputs.filename }}" -ArgumentList "/S"
 
     - name: set env
       if: runner.os == 'Windows'
@@ -143,6 +125,11 @@ runs:
         PLAYDATE_SDK_PATH_lOCAL=$(realpath ~/Documents/PlaydateSDK)
         echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH_lOCAL" >> "$GITHUB_ENV"
         echo "$PLAYDATE_SDK_PATH_lOCAL/bin" >> $GITHUB_PATH
+
+    - name: install gnu-arm-gcc
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: choco install --no-progress gcc-arm-embedded -y
 
     - name: post setup
       id: output
