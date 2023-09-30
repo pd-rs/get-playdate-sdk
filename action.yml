@@ -9,6 +9,9 @@ inputs:
     default: latest
     description: SDK version (ex. `2.0.0` or default `latest`).
     required: false
+  custom-url:
+    description: Custom URL to the SDK installer. Useful for beta versions.
+    required: false
   cache:
     default: "true"
     description: Cache installer.
@@ -39,7 +42,7 @@ runs:
         URL="https://download.panic.com/playdate_sdk${RUNNER_OS_PART?}PlaydateSDK-${{ inputs.version }}.${OS_EXT?}"
         echo "filename=sdk.$OS_EXT" >> $GITHUB_OUTPUT
         echo "ext=$OS_EXT" >> $GITHUB_OUTPUT
-        echo "url=$URL" >> $GITHUB_OUTPUT
+        echo "url=${{ inputs.custom-url || '$URL' }}" >> $GITHUB_OUTPUT
 
     - name: get direct url
       id: direct-url
