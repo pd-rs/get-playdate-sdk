@@ -11,6 +11,7 @@ Also installs arm-gcc gnu toolchain.
 
 - `version` - Specified version of the SDK. Optional. Default value is `latest`.
 - `cache` - Cache installer. Default by `true`.
+- `custom-url` - Custom URL to the SDK installer. Useful for beta versions. If set, `version` will be ignored.
 
 
 ## Usage Example
