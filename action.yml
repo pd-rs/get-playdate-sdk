@@ -60,6 +60,14 @@ runs:
         DIRECT_URL=$(trim "$DIRECT_URL")
         echo "direct url: $DIRECT_URL"
         echo "url=$DIRECT_URL" >> $GITHUB_OUTPUT
+        echo "$DIRECT_URL" > ./TEMP_SDK_INSTALLER_URL
+    - name: hash url
+      id: hash
+      shell: bash
+      run: |
+        echo "url=${{ hashFiles('./TEMP_SDK_INSTALLER_URL') }}" >> $GITHUB_OUTPUT
+        echo "hash: ${{ hashFiles('./TEMP_SDK_INSTALLER_URL') }}"
+        rm ./TEMP_SDK_INSTALLER_URL
 
     - name: Cache restore
       if: inputs.cache == 'true'
@@ -67,7 +75,7 @@ runs:
       id: cache-restore
       with:
         path: ${{ steps.cfg.outputs.filename }}
-        key: ${{ runner.os }}-${{ steps.direct-url.outputs.url }}
+        key: ${{ runner.os }}-pd-sdk-${{ steps.hash.outputs.url }}
 
     - name: download
       # not using cache or have got cache-miss
