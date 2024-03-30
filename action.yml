@@ -71,7 +71,7 @@ runs:
 
     - name: Cache restore
       if: inputs.cache == 'true'
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: cache-restore
       with:
         path: ${{ steps.cfg.outputs.filename }}
@@ -88,7 +88,7 @@ runs:
       id: cache-save
       # cache-miss and using cache
       if: (steps.cache-restore.outputs.cache-hit != 'true') && (inputs.cache == 'true')
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: ${{ steps.cfg.outputs.filename }}
         key: ${{ steps.cache-restore.outputs.cache-primary-key }}
