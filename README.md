@@ -21,7 +21,7 @@ Also installs arm-gcc gnu toolchain.
   id: playdate
   uses: pd-rs/get-playdate-sdk@0.1.6
   with:
-    version: 2.0.0 # possible values: version `x.x.x` or `latest` by default
+    version: 2.4.2 # possible values: version `x.x.x` or `latest` by default
 
 - name: usage
   run: |
