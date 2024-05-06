@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }}
+    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }} ${{ matrix.cache && '+gcc' || '' }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -25,6 +25,7 @@ jobs:
           - latest # actual version
           - 2.4.1 # specified version
         cache: [true, false]
+        gcc: [true, false]
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +35,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           cache: ${{ matrix.cache }}
+          gcc: ${{ matrix.gcc }}
 
       - name: outputs
         run: |
