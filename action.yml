@@ -16,6 +16,10 @@ inputs:
     default: "true"
     description: Cache installer.
     required: false
+  gcc:
+    default: "true"
+    description: Install gcc-arm-none-eabi toolchain
+    required: false
   # path:
   #   default: default
   #   description: SDK installation path. Optional.
@@ -117,7 +121,7 @@ runs:
         echo "$PWD/bin" >> $GITHUB_PATH
 
     - name: install gnu-arm-gcc
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.gcc-arm != 'false'
       shell: bash
       run: |
         sudo apt install -y gcc-arm-none-eabi
@@ -138,7 +142,7 @@ runs:
         echo "$PLAYDATE_SDK_PATH_lOCAL/bin" >> $GITHUB_PATH
 
     - name: install gnu-arm-gcc
-      if: runner.os == 'Windows'
+      if: runner.os == 'Windows' && inputs.gcc-arm != 'false'
       shell: powershell
       run: choco install --no-progress gcc-arm-embedded -y
 

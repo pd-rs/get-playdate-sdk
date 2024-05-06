@@ -10,8 +10,9 @@ Also installs arm-gcc gnu toolchain.
 ## Parameters
 
 - `version` - Specified version of the SDK. Optional. Default value is `latest`.
-- `cache` - Cache installer. Default by `true`.
+- `cache` - Cache installer. Default is `true`.
 - `custom-url` - Custom URL to the SDK installer. Useful for beta versions. If set, `version` will be ignored.
+- `gcc` - `true` to install `gcc-arm-none-eabi` toolchain, `false` to don't. Default is `true`.
 
 
 ## Usage Example
