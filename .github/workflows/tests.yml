@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }}
+    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }} ${{ matrix.cache && '+gcc' || '' }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
