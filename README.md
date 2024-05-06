@@ -21,7 +21,7 @@ Also installs arm-gcc gnu toolchain.
 ```yaml
 - name: Install Playdate SDK
   id: playdate
-  uses: pd-rs/get-playdate-sdk@0.1.6
+  uses: pd-rs/get-playdate-sdk@0.3
   with:
     version: 2.4.2 # possible values: version `x.x.x` or `latest` by default
 
