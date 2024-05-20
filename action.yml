@@ -85,8 +85,9 @@ runs:
       # not using cache or have got cache-miss
       if: (steps.cache-restore.outputs.cache-hit != 'true') || (inputs.cache != 'true')
       shell: bash
-      run: |
+      run: >-
         curl -L -sS --show-error --fail "${{ steps.direct-url.outputs.url }}" -o ${{ steps.cfg.outputs.filename }}
+        || curl -L -sS --show-error --fail "${{ steps.cfg.outputs.url }}" -o ${{ steps.cfg.outputs.filename }}
 
     - name: Cache save
       id: cache-save
