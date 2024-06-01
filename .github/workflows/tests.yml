@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '(cache)' || '' }} ${{ matrix.cache && '+gcc' || '' }}
+    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '+cache' || '' }} ${{ matrix.gcc && '+gcc' || '' }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -23,7 +23,7 @@ jobs:
           - windows-latest
         version:
           - latest # actual version
-          - 2.4.1 # specified version
+          - 2.4.1  # specified version
         cache: [true, false]
         gcc: [true, false]
     steps:
