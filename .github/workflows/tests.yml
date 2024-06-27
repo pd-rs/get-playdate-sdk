@@ -9,7 +9,10 @@ on:
 
 jobs:
   tests:
-    name: ${{ matrix.version }} on ${{ matrix.os }} ${{ matrix.cache && '+cache' || '' }} ${{ matrix.gcc && '+gcc' || '' }}
+    name: >-
+      ${{ matrix.version }} on
+      ${{ (contains(matrix.os, 'macos') && 'mac') || (contains(matrix.os, 'ubuntu') && 'linux') || (contains(matrix.os, 'windows') && 'win') || matrix.os }}
+      ${{ matrix.cache && '+cache' || '' }} ${{ matrix.gcc && '+gcc' || '' }} ${{ matrix.root-win-path && '+fix-path' || '' }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -26,6 +29,7 @@ jobs:
           - 2.4.1  # specified version
         cache: [true, false]
         gcc: [true, false]
+        root-win-path: [true, false]
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +40,7 @@ jobs:
           version: ${{ matrix.version }}
           cache: ${{ matrix.cache }}
           gcc: ${{ matrix.gcc }}
+          root-win-path: ${{ matrix.root-win-path }}
 
       - name: outputs
         run: |
@@ -48,8 +53,15 @@ jobs:
           [ -d "$PLAYDATE_SDK_PATH" ] || (echo "::error ::Missing output PLAYDATE_SDK_PATH" && exit 1)
 
       - name: equality
+        if: (runner.os != 'Windows' || !matrix.root-win-path) && (steps.installer.outputs.root != env.PLAYDATE_SDK_PATH)
         run: |
-          [ "$PLAYDATE_SDK_PATH" == "${{ steps.installer.outputs.root }}" ] || (echo "::error ::Env not eq output: PLAYDATE_SDK_PATH" && exit 1)
+          echo "::error ::Env not eq output: $PLAYDATE_SDK_PATH != ${{ steps.installer.outputs.root }}"
+          exit 1
+      - name: inequality
+        if: (runner.os == 'Windows' && matrix.root-win-path) && (steps.installer.outputs.root == env.PLAYDATE_SDK_PATH)
+        run: |
+          echo "::error ::Env is eq output: $PLAYDATE_SDK_PATH == ${{ steps.installer.outputs.root }}"
+          exit 1
 
       - name: $PATH
         run: |
