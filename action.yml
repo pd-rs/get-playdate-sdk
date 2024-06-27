@@ -20,6 +20,10 @@ inputs:
     default: "true"
     description: Install gcc-arm-none-eabi toolchain
     required: false
+  root-win-path:
+    default: "false"
+    description: Convert path to windows path format. Ignored on non-win workers. If enabled changes `outputs.root`, but not `$PLAYDATE_SDK_PATH`.
+    required: false
   # path:
   #   default: default
   #   description: SDK installation path. Optional.
@@ -151,5 +155,12 @@ runs:
       id: output
       shell: bash
       run: |
-        echo "root=$PLAYDATE_SDK_PATH" >> $GITHUB_OUTPUT
         echo "version=$(cat $PLAYDATE_SDK_PATH/VERSION.txt)" >> $GITHUB_OUTPUT
+        # ${{ (runner.os == 'Windows' && inputs.root-win-path) && 'echo "root=$(cygpath -w "$PLAYDATE_SDK_PATH")" >> $GITHUB_OUTPUT' }}
+
+        if ${{ runner.os == 'Windows' }} && ${{ inputs.root-win-path }}; then
+          PLAYDATE_SDK_PATH=$(cygpath -w "$PLAYDATE_SDK_PATH")
+          echo "fix root path"
+        fi
+        echo "root=$PLAYDATE_SDK_PATH" >> $GITHUB_OUTPUT
+        echo "set root to $PLAYDATE_SDK_PATH"
