@@ -107,9 +107,10 @@ runs:
       shell: bash
       run: |
         unzip ${{ steps.cfg.outputs.filename }}
-        sudo installer -store -pkg "PlaydateSDK.pkg" -target /
-        cat ~/.Playdate/config
+        mkdir -p ~/Developer
+        sudo installer -pkg "PlaydateSDK.pkg" -target ~/Developer
         echo "root: $PLAYDATE_SDK_PATH"
+        cat ~/.Playdate/config || echo "MISSED CONFIG"
         PLAYDATE_SDK_PATH="$(grep -E '^\s*SDKRoot' ~/.Playdate/config | head -n 1 | awk '{print $2}')"
         echo "PLAYDATE_SDK_PATH=$PLAYDATE_SDK_PATH" >> $GITHUB_ENV
 

@@ -26,7 +26,9 @@ jobs:
           - windows-latest
         version:
           - latest # actual version
-          - 2.4.1  # specified version
+          # specified version
+          - 2.4.1
+          - 2.7.6
         cache: [true, false]
         gcc: [true, false]
         root-win-path: [true, false]
